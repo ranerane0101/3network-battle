@@ -1,9 +1,9 @@
+import LoadingIndicator from "./Components/LoadingIndicator";
 import Arena from "./Components/Arena";
 import myEpicGame from "./utils/MyEpicGame.json";
 import { ethers } from "ethers";
 import { CONTRACT_ADDRESS, transformCharacterData } from "./constant";
 import React, { useEffect, useState } from 'react';
-import twitterLogo from './assets/twitter-logo.svg';
 import './App.css';
 //SelectCharacterに入っているファイルをインポートします。
 import SelectCharacter from './Components/SelectCharacter';
@@ -13,6 +13,9 @@ const App = () => {
   const [currentAccount, setCurrentAccount] = useState(null);
   //characterNFTとsetCharacterNFTを初期化します。
   const [characterNFT, setCharacterNFT] = useState(null);
+  //ロード状態を初期化します
+  const [isLoading, setIsLoading] = useState(false);
+
   //ユーザーがSepoliaNetworkに接↑うされているか確認します。
   //11155111はSepoliaのネットワークコードです
   const checkNetwork = async () => {
@@ -32,6 +35,9 @@ const App = () => {
       const { ethereum } = window;
       if (!ethereum) {
         console.log("Make sure you have MetaMask!");
+
+        //ここでisLoadingを設定します
+        setIsLoading(false);
         return;
       } else {
         console.log("We have the ethereum object", ethereum);
@@ -55,9 +61,15 @@ const App = () => {
     } catch (error) {
       console.log(error);
     }
+    //全ての関数ロジックの後に、stateプロパティを解放します
+    setIsLoading(false);
   };
   //レンダリングメソッド
   const renderContent = () => {
+
+    if (isLoading) {
+      return <LoadingIndicator />;
+        }
     //シナリオ１
     //ユーザーがWEBアプリにログインしていない場合、WEBアプリ上に、"Connect Wallet to Get Started"ボタンを表示する
     if (!currentAccount) {
@@ -70,6 +82,7 @@ const App = () => {
           >
             Connect Wallet to Get Started
           </button>
+          
         </div>
       );
       //シナリオ２
@@ -113,7 +126,12 @@ const App = () => {
 
   //ページがロードされたときに、useEffect()内の関数が呼び出されます
   useEffect(() => {
+    //ページがロードされたら、即座にロード状態を設定するようにします
+    //一度だけ実行される関数
+    setIsLoading(true);
     checkIfWalletIsConnected();
+
+    //空の依存配列だから表示された時に一度だけ実行される
   }, []);
   //ページがロードされた時に、useEffect()内の関数が呼び出されます。
   useEffect(() => {
@@ -136,6 +154,8 @@ const App = () => {
       } else {
         console.log("No character NFT found");
       }
+      //ユーザーが保持しているNFTの確認が完了したらロード状態をfalseインする
+      setIsLoading(false);
     };
 
     //接続されたウォレットがある場合のみ、下記を実行します。

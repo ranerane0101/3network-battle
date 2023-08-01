@@ -1,24 +1,35 @@
+import LoadingIndicator from "../LoadingIndicator";
 import React, { useEffect, useState } from "react";
 import "./SelectCharacter.css";
 import { ethers } from "ethers";
 import { CONTRACT_ADDRESS, transformCharacterData } from "../../constant";
 import myEpicGame from "../../utils/MyEpicGame.json";
+
 // setCharacterNFTについては、あとで詳しく説明します。
 const SelectCharacter = ({ setCharacterNFT }) => {
     const [characters, setCharacters] = useState([]);
     const [gameContract, setGameContract] = useState(null);
+    const [mintingCharacter, setMintingCharacter] = useState(false);
 
     //NFTキャラクターをMintします
     const mintCharacterNFTAction = (characterId) => async () => {
         try {
             if (gameContract) {
+                //Mintが開始されたらローディングマークを表示する
+                setMintingCharacter(true);
+
                 console.log("Minting character in progress...");
                 const mintTxn = await gameContract.mintCharacterNFT(characterId);
                 await mintTxn.wait();
                 console.log("mintTxn:", mintTxn);
+                //Mintが完了したらローディングマークを消す
+                setMintingCharacter(false);
             }
         } catch (error) {
             console.warn("MintCharacterAction Error:", error);
+
+            //エラーが発生した場合でもロードマークを消す
+            setMintingCharacter(false);
         }
     };
 
@@ -119,6 +130,15 @@ const SelectCharacter = ({ setCharacterNFT }) => {
       {/* キャラクターNFTがフロントエンド上で読み込めている際に、下記を表示します*/}
       {characters.length > 0 && (
         <div className="character-grid">{renderCharacters()}</div>
+      )}
+      {/* mintingCharacter = true　の時のみ、ロードマークを表示します。 */}
+      {mintingCharacter && (
+        <div className="loading">
+            <div className="indicator">
+                <LoadingIndicator />
+                <p>ロード中...</p>
+            </div>
+            </div>
       )}
     </div>
   );

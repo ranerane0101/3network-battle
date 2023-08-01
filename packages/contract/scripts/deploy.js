@@ -6,14 +6,14 @@ const main = async () => {
   const gameContractFactory = await hre.ethers.getContractFactory("MyEpicGame");
   //HardhatがローカルのEthereumネットワークを、コントラクトのためだけに作成します。
   const gameContract = await gameContractFactory.deploy(
-    ["ZORO", "NAMI", "USOPP"], //キャラクターの名前
+    ["ZORO", "NAMI", "CYAPPY"], //キャラクターの名前
     [
       "https://i.imgur.com/TZEhCTX.png", //キャラクターの画像
       "https://i.imgur.com/WVAaMPA.png",
-      "https://i.imgur.com/pCMZeiM.png",
+      "https://i.imgur.com/RasoOmk.jpg",
     ],
     [100, 200, 300], //キャラクターのHP
-    [100, 50, 25],//キャラクターの攻撃力
+    [100, 50, 1000],//キャラクターの攻撃力
     "CROCODILE",//Bossの名前
     "https://i.imgur.com/BehawOh.png",//Bossの画像
     10000,//Bossのhp

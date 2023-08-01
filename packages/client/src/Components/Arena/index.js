@@ -1,3 +1,4 @@
+import LoadingIndicator from "../LoadingIndicator";
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { CONTRACT_ADDRESS, transformCharacterData } from "../../constant";
@@ -38,7 +39,7 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
             console.error("Error attacking boss:", error);
             setAttackState("");
         }
-     };
+    };
 
     //ページがロードされると下記が実行される
     useEffect(() => {
@@ -63,7 +64,7 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
                 return { ...prevState, hp: playerHp };
             });
             setCharacterNFT((prevState) => {
-                return {...prevState, hp: playerHp };
+                return { ...prevState, hp: playerHp };
             });
         };
 
@@ -118,6 +119,15 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
                             {`💥 Attack ${boss.name}`}
                         </button>
                     </div>
+                    {/* Attackボタンの下にロードマークを追加*/}
+                    {attackState === "attacking" && (
+                        <div className="loading-indicator">
+                            <LoadingIndicator />
+                            <p>Attacking ⚔️</p>
+                        </div>
+
+                    )}
+
                 </div>
             )}
 
@@ -142,9 +152,9 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
                         </div>
                     </div>
                 </div>
-                
-    )
-}
+
+            )
+            }
         </div >
     );
 };
